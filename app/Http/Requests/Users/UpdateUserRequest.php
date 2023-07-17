@@ -38,6 +38,21 @@ class UpdateUserRequest extends FormRequest
             'gender' => [
                 'required'
             ],
+            'birthday' => [
+                'required'
+            ],
+            'ethnic' => [
+                'required'
+            ],
+            'province' => [
+                'required'
+            ],
+            'district' => [
+                'required'
+            ],
+            'ward' => [
+                'required'
+            ],
         ];   
         return [
             $this->nameCol => $rules[$this->nameCol],  

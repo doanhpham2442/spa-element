@@ -1,22 +1,28 @@
 <template>
-    <div style="height: 400px">
+    <div class="table-container">
         <el-auto-resizer>
-            <template #default="{ height, width }">
+            <template #default="{ height, width }" #overlay #loading="isLoading">
                 <el-table-v2 :columns="columns" :data="users" :width="width" :height="height" fixed />
             </template>
         </el-auto-resizer>
+        <el-icon class="is-loading" color="var(--el-color-primary)" :size="26">
+          <loading-icon />
+        </el-icon>
     </div>
 </template>
   
 <script lang="ts" setup>
-import { ref, h, onMounted } from 'vue'
-import { ElInput, ElMessage, ElSelect, ElOption, ElButton, ElDatePicker } from 'element-plus'
+import { ref, h, onMounted, computed, watch } from 'vue'
+import { ElInput, ElMessage, ElSelect, ElOption, ElButton, ElDatePicker,  } from 'element-plus'
+import { Loading as LoadingIcon } from '@element-plus/icons-vue'
 import type { FunctionalComponent } from 'vue'
 import type { InputInstance } from 'element-plus'
 import axios, { AxiosResponse } from 'axios';
 
 type SelectionCellProps = {
     value: string
+    column?: any
+    selectedChildId?: any
     intermediate?: boolean
     onChange: (value: string) => void
     forwardRef: (el: InputInstance) => void
@@ -26,10 +32,13 @@ interface User {
     name: string
     phone: string
 }
-interface Gender {
+interface SelectOption {
     id: string
     name: string
     value: string
+    provinceid: string
+    districtid: string
+    wardid: string
 }
 
 interface CustomColumn {
@@ -40,8 +49,20 @@ interface CustomColumn {
     dataKey: string;
     cellRenderer?: ({ rowData, column }: { rowData: any; column: any }) => any;
 }
+const isLoading = ref<boolean>(true);
 const users = ref<User[]>([]);
-const gender = ref<Gender[]>([]);
+const gender = ref<SelectOption[]>([]);
+const ethnic = ref<SelectOption[]>([]);
+const province = ref<SelectOption[]>([]);
+const district = ref<SelectOption[]>([]);
+const ward = ref<SelectOption[]>([]);
+const input = ref<InputInstance | null>(null);
+const setRef = (el: InputInstance) => {
+    input.value = el;
+    if (el) {
+        el.focus?.();
+    }
+};
 
 const InputCell: FunctionalComponent<SelectionCellProps> = ({
     value,
@@ -55,32 +76,117 @@ const InputCell: FunctionalComponent<SelectionCellProps> = ({
         modelValue: value,
     });
 };
+const selectedChildId = ref<any | null>(null);
+
 const SelectCell: FunctionalComponent<SelectionCellProps> = ({
     value,
     onChange,
     forwardRef,
+    column,
+    selectedChildId
 }) => {
+    let options: any = null;
+
+    const filteredDistricts = computed(() => {
+        if (selectedChildId.value.provinceid) {
+            return district.value.filter((item) => item.provinceid === selectedChildId.value.provinceid);
+        }
+        return [];
+    });
+    const filteredWard = computed(() => {
+        if (selectedChildId.value.districtid) {
+            return ward.value.filter((item) => item.districtid === selectedChildId.value.districtid);
+        }
+        return [];
+    });
+
+    const handleProvinceChange = (value: string) => {
+        onChange(value);
+        // selectedChildId.value = {
+        //     provinceid: value,
+        //     districtid: null,
+        //     districtid: null,
+        // };
+    };
+
+    switch (column?.dataKey) {
+        case 'gender':
+            options = gender.value.map((item) =>
+                h(ElOption, {
+                    key: item.id,
+                    label: item.name,
+                    value: item.id,
+                })
+            );
+            break;
+        case 'ethnic':
+            options = ethnic.value.map((item) =>
+                h(ElOption, {
+                    key: item.id,
+                    label: item.name,
+                    value: item.id,
+                })
+            );
+            break;
+        case 'province':
+            options = province.value.map((item) =>
+                h(ElOption, {
+                    key: item.provinceid,
+                    label: item.name,
+                    value: item.provinceid,
+                })
+            );
+            break;
+        case 'district':
+            options = filteredDistricts.value.map((item) =>
+                h(ElOption, {
+                    key: item.districtid,
+                    label: item.name,
+                    value: item.districtid,
+                })
+            );
+            break;
+        case 'ward':
+            options = filteredWard.value.map((item) =>
+                h(ElOption, {
+                    key: item.wardid,
+                    label: item.name,
+                    value: item.wardid,
+                })
+            );
+            break;
+        default:
+            options = null;
+            break;
+    }
+
     return h(ElSelect, {
         ref: forwardRef as any,
         modelValue: value,
         filterable: true,
-        onChange,
-    }, () => gender.value.map((item) => h(ElOption, {
-        key: item.id,
-        label: item.name,
-        value: item.id,
-    })));
+        onChange: handleProvinceChange,
+    }, () => options);
 };
+
+
+
 const DatePickerCell: FunctionalComponent<SelectionCellProps> = ({
     value,
     onChange,
     forwardRef,
 }) => {
+    const handleDateChange = (date: Date) => {
+        const year = date.getFullYear();
+        const month = date.getMonth() + 1;
+        const day = date.getDate();
+        const formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+        onChange(formattedDate);
+    };
     return h(ElDatePicker, {
         ref: forwardRef as any,
-        value: new Date(value),
-        type: "date",
-        onChange: (date: Date) => onChange(date.toISOString()),
+        modelValue: value,
+        type: 'date',
+        'onUpdate:modelValue': handleDateChange,
     });
 };
 
@@ -185,7 +291,7 @@ const columns: CustomColumn[] = [
         },
     },
 ];
-const putData = (submitData, rowData, column, originalValue:string) => {
+const putData = (submitData, rowData, column, originalValue: string) => {
     axios
         .put<User[]>('/api/user/', submitData)
         .then((response: AxiosResponse) => {
@@ -205,7 +311,6 @@ const putData = (submitData, rowData, column, originalValue:string) => {
         });
 }
 const editingColumnIndex = ref<number | null>(null);
-
 columns.forEach((column, columnIndex) => {
     if (column.dataKey !== 'id' && column.dataKey !== 'action') {
         columns[columnIndex] = {
@@ -216,8 +321,16 @@ columns.forEach((column, columnIndex) => {
                 const onChange = (value: string) => {
                     rowData[column.dataKey!] = value;
                     isValueChanged = true;
-                    if (column.dataKey == 'gender') {
-                        onExitEditMode()
+
+                    if (column.dataKey == 'province') {
+                        rowData['district'] = '';
+                        rowData['ward'] = '';
+                    }
+                    console.log(column.dataKey);
+
+                    const editableColumns = ['gender', 'ethnic', 'province', 'district', 'ward', 'birthday'];
+                    if (editableColumns.includes(column.dataKey)) {
+                        onExitEditMode();
                     }
                 };
 
@@ -225,6 +338,12 @@ columns.forEach((column, columnIndex) => {
                     rowData.editing = true;
                     editingColumnIndex.value = columnIndex;
                     rowData.originalValue = rowData[column.dataKey!];
+
+                    selectedChildId.value = {
+                        provinceid: rowData['province'],
+                        districtid: rowData['district'],
+                    };
+                    console.log(selectedChildId.value);
                 };
 
                 const onExitEditMode = () => {
@@ -238,32 +357,44 @@ columns.forEach((column, columnIndex) => {
                         putData(submitData, rowData, column, rowData.originalValue);
                     }
                 };
-                const getGenderName = (value: string): string => {
-                    const genderItem = gender.value.find((item) => item.id == value);
-                    return genderItem ? genderItem.name : '';
-                };
-                const displayValue =
-                    column.dataKey === 'gender'
-                        ? getGenderName(rowData[column.dataKey])
-                        : rowData[column.dataKey!];
-
-                const input = ref<InputInstance | null>(null);
-                const setRef = (el: InputInstance) => {
-                    input.value = el;
-                    if (el) {
-                        el.focus?.();
+                const getSelectName = (value: string, dataKey: string): string => {
+                    switch (dataKey) {
+                        case 'gender':
+                            const genderItem = gender.value.find((item) => item.id === value);
+                            return genderItem ? genderItem.name : '';
+                        case 'ethnic':
+                            const ethnicItem = ethnic.value.find((item) => item.id === value);
+                            return ethnicItem ? ethnicItem.name : '';
+                        case 'province':
+                            const provinceItem = province.value.find((item) => item.provinceid === value);
+                            return provinceItem ? provinceItem.name : '';
+                        case 'district':
+                            const districtItem = district.value.find((item) => item.districtid === value);
+                            return districtItem ? districtItem.name : '';
+                        case 'ward':
+                            const wardItem = ward.value.find((item) => item.wardid === value);
+                            return wardItem ? wardItem.name : '';
+                        default:
+                            return rowData[column.dataKey!];
                     }
                 };
+                const displayValue = getSelectName(rowData[column.dataKey], column.dataKey);
+
                 return rowData.editing && editingColumnIndex.value === columnIndex ? (
                     (() => {
                         switch (column.dataKey) {
                             case 'gender':
+                            case 'ethnic':
                             case 'province':
+                            case 'district':
+                            case 'ward':
                                 return h(SelectCell, {
                                     forwardRef: setRef,
                                     value: displayValue,
                                     onChange,
                                     onBlur: onExitEditMode,
+                                    'column': column,
+                                    'selectedChildId': selectedChildId
                                 });
                             case 'birthday':
                                 return h(DatePickerCell, {
@@ -297,11 +428,43 @@ columns.forEach((column, columnIndex) => {
 });
 
 onMounted(() => {
-
+    isLoading.value = true;
     axios
-        .get<Gender[]>('/api/gender')
+        .get<SelectOption[]>('/api/gender')
         .then((response: AxiosResponse) => {
             gender.value = response.data.data;
+        })
+        .catch((error: any) => {
+            console.error(error);
+        });
+    axios
+        .get<SelectOption[]>('/api/ethnic')
+        .then((response: AxiosResponse) => {
+            ethnic.value = response.data.data;
+        })
+        .catch((error: any) => {
+            console.error(error);
+        });
+    axios
+        .get<SelectOption[]>('/api/province')
+        .then((response: AxiosResponse) => {
+            province.value = response.data.data;
+        })
+        .catch((error: any) => {
+            console.error(error);
+        });
+    axios
+        .get<SelectOption[]>('/api/district')
+        .then((response: AxiosResponse) => {
+            district.value = response.data.data;
+        })
+        .catch((error: any) => {
+            console.error(error);
+        });
+    axios
+        .get<SelectOption[]>('/api/ward')
+        .then((response: AxiosResponse) => {
+            ward.value = response.data.data;
         })
         .catch((error: any) => {
             console.error(error);
@@ -311,11 +474,12 @@ onMounted(() => {
         .get<User[]>('/api/list')
         .then((response: AxiosResponse) => {
             users.value = response.data.data;
+            isLoading.value = false;
         })
         .catch((error: any) => {
             console.error(error);
+            isLoading.value = false;
         });
-
 });
 
 </script>

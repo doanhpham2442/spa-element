@@ -27,4 +27,7 @@ Route::middleware('api')->group(function () {
 
     Route::get('gender', [UserApiController::class, 'getGender']);
     Route::get('province', [UserApiController::class, 'getProvince']);
+    Route::get('district', [UserApiController::class, 'getDistrict']);
+    Route::get('ward', [UserApiController::class, 'getWard']);
+    Route::get('ethnic', [UserApiController::class, 'getEthnic']);
 });
