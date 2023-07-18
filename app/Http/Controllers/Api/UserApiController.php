@@ -98,57 +98,17 @@ class UserApiController extends Controller
         //     }
         // }
     }
-    public function getGender()
+    public function getData(Request $request)
     {
         try {
-            $gender = Gender::all();
-            return response()->json(['data' => $gender], Response::HTTP_OK);
+            $data['gender'] = Gender::all();
+            $data['province'] = DB::table('vn_province')->get();
+            $data['district'] = DB::table('vn_district')->get();
+            $data['ward'] = DB::table('vn_ward')->get();
+            $data['ethnic'] = DB::table('vn_ethnic')->get();
+            return response()->json(['data' => $data], Response::HTTP_OK);
         } catch (ModelNotFoundException $e) {
-            throw new HttpResponseException(response()->json(['message' => 'Gender does not exis'], Response::HTTP_BAD_REQUEST));
-        } catch (\Throwable $th) {
-            Log::error($th);
-        }
-    }
-    public function getEthnic()
-    {
-        try {
-            $ethnic = DB::table('vn_ethnic')->get();
-            return response()->json(['data' => $ethnic], Response::HTTP_OK);
-        } catch (ModelNotFoundException $e) {
-            throw new HttpResponseException(response()->json(['message' => 'Ethnic does not exis'], Response::HTTP_BAD_REQUEST));
-        } catch (\Throwable $th) {
-            Log::error($th);
-        }
-    }
-    public function getProvince()
-    {
-        try {
-            $province = DB::table('vn_province')->get();
-            return response()->json(['data' => $province], Response::HTTP_OK);
-        } catch (ModelNotFoundException $e) {
-            throw new HttpResponseException(response()->json(['message' => 'Province does not exis'], Response::HTTP_BAD_REQUEST));
-        } catch (\Throwable $th) {
-            Log::error($th);
-        }
-    }
-    public function getDistrict(Request $request)
-    {
-        try {
-            $district = DB::table('vn_district')->get();
-            return response()->json(['data' => $district], Response::HTTP_OK);
-        } catch (ModelNotFoundException $e) {
-            throw new HttpResponseException(response()->json(['message' => 'District does not exis'], Response::HTTP_BAD_REQUEST));
-        } catch (\Throwable $th) {
-            Log::error($th);
-        }
-    }
-    public function getWard(Request $request)
-    {
-        try {
-            $ward = DB::table('vn_ward')->get();
-            return response()->json(['data' => $ward], Response::HTTP_OK);
-        } catch (ModelNotFoundException $e) {
-            throw new HttpResponseException(response()->json(['message' => 'Ward does not exis'], Response::HTTP_BAD_REQUEST));
+            throw new HttpResponseException(response()->json(['message' => 'data does not exis'], Response::HTTP_BAD_REQUEST));
         } catch (\Throwable $th) {
             Log::error($th);
         }

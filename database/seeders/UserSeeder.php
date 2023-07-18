@@ -17,7 +17,7 @@ class UserSeeder extends Seeder
     {
 
         $faker = Faker::create();
-        $limit = 30;
+        $limit = 5000;
 
         for ($i = 0; $i < $limit; $i++){
             DB::table('users')->insert([
@@ -28,6 +28,7 @@ class UserSeeder extends Seeder
                 'birthday' => $faker->dateTimeBetween('-50 years', '-18 years')->format('Y-m-d'),
                 'ethnic' => $faker->numberBetween(1, 55),
                 'province' => str_pad($faker->numberBetween(1, 96), 2, '0', STR_PAD_LEFT),
+                'parent_id' => $faker->numberBetween(44085, 44185),
             ]);
         }
     }

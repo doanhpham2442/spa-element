@@ -18,6 +18,10 @@ class UserController extends Controller
     {
         return view('user');
     }
+    public function parent()
+    {
+        return view('parent');
+    }
 
     
 }  

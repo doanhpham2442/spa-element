@@ -18,3 +18,4 @@ Route::get('/', function () {
     return view('welcome');
 });
 Route::get('user', [UserController::class, 'index']);
+Route::get('parent', [UserController::class, 'parent']);

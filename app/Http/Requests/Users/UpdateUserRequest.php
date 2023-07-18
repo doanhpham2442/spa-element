@@ -53,6 +53,9 @@ class UpdateUserRequest extends FormRequest
             'ward' => [
                 'required'
             ],
+            'parent_id' => [
+                'required'
+            ],
         ];   
         return [
             $this->nameCol => $rules[$this->nameCol],  
