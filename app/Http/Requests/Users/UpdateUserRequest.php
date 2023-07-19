@@ -54,7 +54,7 @@ class UpdateUserRequest extends FormRequest
                 'required'
             ],
             'parent_id' => [
-                'required'
+                
             ],
         ];   
         return [

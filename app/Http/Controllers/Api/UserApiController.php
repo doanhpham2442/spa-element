@@ -32,7 +32,37 @@ class UserApiController extends Controller
             Log::error($th);
         }
     }
+    public function getUserParent()
+    {
+        try {
+            // $users = User::orderBy('id', 'asc')->get();
+            $users = User::with('children')->whereNull('parent_id')->get();
+            $tree = $users;
+            // $tree = $this->buildTree($users);
+            
+            return response()->json(['data' => $tree], Response::HTTP_OK);
+        } catch (ModelNotFoundException $e) {
+            throw new HttpResponseException(response()->json(['message' => 'User does not exis'], Response::HTTP_BAD_REQUEST));
+        } catch (\Throwable $th) {
+            Log::error($th);
+        }
+       
+    }
+    function buildTree($users, $parentId = 0)
+    {
+        $data = [];
+        foreach ($users as $val) {
+            if ($val['parent_id'] == $parentId) {
+                $children = $this->buildTree($users, $val['id']);
+                if ($children) {
+                    $val['children'] = $children;
+                }
+                $data[] = $val;
+            }
+        }
 
+        return $data;
+    }
     public function show(Request $request)
     {
         $requestData = $request->all();
@@ -113,6 +143,5 @@ class UserApiController extends Controller
             Log::error($th);
         }
     }
-
 
 }

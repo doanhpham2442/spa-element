@@ -2,7 +2,7 @@
     <div class="table-container">
         <el-auto-resizer>
             <template #default="{ height, width }">
-                <el-table-v2 :columns="columns" :data="treeData" :width="width" :height="height" fixed
+                <el-table-v2 :columns="columns" :data="users" :width="width" :height="height" fixed
                     :expand-column-key="columns.find(col => col.key)?.dataKey" />
             </template>
         </el-auto-resizer>
@@ -335,38 +335,39 @@ columns.forEach((column, columnIndex) => {
     }
 });
 
-const unflatten = (
-    users,
-    rootId = null,
-    dataKey = 'id',
-    parentKey = 'parent_id'
-) => {
-    const tree: any[] = []
-    const childrenMap = {}
-    for (const datum of users.value) {
-        const item = { ...datum }
-        const id = item[dataKey]
-        const parentId = item[parentKey]
+// const unflatten = (
+//     users,
+//     rootId = null,
+//     dataKey = 'id',
+//     parentKey = 'parent_id'
+// ) => {
+//     const tree: any[] = []
+//     const childrenMap = {}
+//     for (const datum of users.value) {
+//         const item = { ...datum }
+//         const id = item[dataKey]
+//         const parentId = item[parentKey]
 
-        if (Array.isArray(item.children)) {
-            childrenMap[id] = item.children.concat(childrenMap[id] || [])
-        } else if (!childrenMap[id]) {
-            childrenMap[id] = []
-        }
-        item.children = childrenMap[id]
+//         if (Array.isArray(item.children)) {
+//             childrenMap[id] = item.children.concat(childrenMap[id] || [])
+//         } else if (!childrenMap[id]) {
+//             childrenMap[id] = []
+//         }
+//         item.children = childrenMap[id]
 
-        if (parentId !== undefined && parentId !== rootId) {
-            if (!childrenMap[parentId]) childrenMap[parentId] = []
-            childrenMap[parentId].push(item)
-        } else {
-            tree.push(item)
-        }
-    }
-    console.log(tree);
-    
-    return tree
-}
-const treeData = computed(() => unflatten(users))
+//         if (parentId !== undefined && parentId !== rootId) {
+//             if (!childrenMap[parentId]) childrenMap[parentId] = []
+//             childrenMap[parentId].push(item)
+//         } else {
+//             tree.push(item)
+//         }
+//     }
+//     console.log(tree);
+
+//     return tree
+// }
+// const treeData = computed(() => unflatten(users))
+
 
 onMounted(() => {
     axios
@@ -383,9 +384,12 @@ onMounted(() => {
         });
 
     axios
-        .get<User[]>('/api/list')
+        // .get<User[]>('/api/list')
+        .get<User[]>('/api/user-parent')
         .then((response: AxiosResponse) => {
             users.value = response.data.data;
+            console.log(response);
+            
         })
         .catch((error: any) => {
             console.error(error);

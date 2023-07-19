@@ -28,7 +28,7 @@ class UserSeeder extends Seeder
                 'birthday' => $faker->dateTimeBetween('-50 years', '-18 years')->format('Y-m-d'),
                 'ethnic' => $faker->numberBetween(1, 55),
                 'province' => str_pad($faker->numberBetween(1, 96), 2, '0', STR_PAD_LEFT),
-                'parent_id' => $faker->numberBetween(44085, 44185),
+                // 'parent_id' => $faker->numberBetween(94960, 95000),
             ]);
         }
     }

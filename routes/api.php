@@ -26,4 +26,5 @@ Route::middleware('api')->group(function () {
     Route::delete('user', [UserApiController::class, 'destroy']);
 
     Route::get('data-spa', [UserApiController::class, 'getData']);
+    Route::get('user-parent', [UserApiController::class, 'getUserParent']);
 });
