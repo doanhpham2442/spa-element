@@ -1,11 +1,20 @@
 <template>
-    <div class="table-container">
-        <el-auto-resizer>
-            <template #default="{ height, width }">
-                <el-table-v2 :columns="columns" :data="users" :width="width" :height="height" fixed
-                    :expand-column-key="columns.find(col => col.key)?.dataKey" />
-            </template>
-        </el-auto-resizer>
+    <div class="common-layout">
+        <el-container>
+            <el-header>
+                
+            </el-header>
+            <el-main>
+                <div class="table-container">
+                    <el-auto-resizer>
+                        <template #default="{ height, width }">
+                            <el-table-v2 :columns="columns" :data="users" :width="width" :height="height" fixed
+                                :expand-column-key="columns.find(col => col.key)?.dataKey" />
+                        </template>
+                    </el-auto-resizer>
+                </div>
+            </el-main>
+        </el-container>
     </div>
 </template>
   
@@ -389,7 +398,7 @@ onMounted(() => {
         .then((response: AxiosResponse) => {
             users.value = response.data.data;
             console.log(response);
-            
+
         })
         .catch((error: any) => {
             console.error(error);

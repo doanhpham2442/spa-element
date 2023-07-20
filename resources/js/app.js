@@ -13,6 +13,11 @@ const app = createApp({
         'user-parent': UserParent
     }
 });
+
+for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+  app.component(key, component)
+}
+
 app
     .use(ElementPlus)
     .mount('#app')

@@ -1,132 +1,358 @@
 <template>
-    <el-table-v2
-      v-model:expanded-row-keys="expandedRowKeys"
-      :columns="columns"
-      :data="treeData"
-      :width="700"
-      :expand-column-key="expandColumnKey"
-      :height="400"
-      fixed
-      @row-expand="onRowExpanded"
-      @expanded-rows-change="onExpandedRowsChange"
-    />
-  </template>
+    <div class="common-layout">
+        <el-container>
+            <el-header class="header">
+                <div class="header-logo">
+                    <a href="" class='img-scaledown'>
+                        <img src="http://work.horusvn.com/avatar/thumb-HORUS.png" alt="">
+                    </a>
+                </div>
+                <div class="header-menu">
+                    <el-menu :default-active="activeIndex" class="header-menu-item" mode="horizontal" @select="handleSelect"
+                        :ellipsis="false" menu-trigger="click">
+                        <el-menu-item index="1" class="menu-custom menu-left"><a href="">Trang chủ</a></el-menu-item>
+                        <el-menu-item index="2" class="menu-custom menu-left">Diễn đàn</el-menu-item>
+                        <el-sub-menu index="3" class="menu-custom menu-left">
+                            <template #title >Có gì mới</template>
+                            <el-menu class="header-menu-item">
+                                <el-menu-item index="3-1" >item one</el-menu-item>
+                                <el-menu-item index="3-2">item two</el-menu-item>
+                                <el-menu-item index="3-3">item three</el-menu-item>
+                            </el-menu>
+                        </el-sub-menu>
+                        <el-sub-menu index="4" class="menu-custom menu-left">
+                            <template #title>Thành viên</template>
+                            <el-menu class="header-menu-item">
+                                <el-menu-item index="4-1">item one</el-menu-item>
+                                <el-menu-item index="4-2">item two</el-menu-item>
+                                <el-menu-item index="4-3">item three</el-menu-item>
+                            </el-menu>
+                        </el-sub-menu>
+
+                        <div class="flex-grow"></div>
+
+                        <el-sub-menu index="5" class="menu-custom menu-right">
+                            <template #title>
+                                <span class="avatar img-scaledown">
+                                    <img src="https://forum.horusvn.com/data/avatars/h/0/46.jpg?1689643551" alt="">
+                                </span>
+                                <span class="name">Doanhpt</span>
+                            </template>
+                            <el-tabs v-model="activeName" class="account-info" @tab-click="handleClick">
+                                <el-tab-pane label="Tài khoản của bạn" name="user-info" class="header-tab-info">
+                                    <div class="head-info">
+                                        <el-row :gutter="20">
+                                            <el-col :span="8">
+                                                <a href="" class="image img-cover">
+                                                    <img src="https://forum.horusvn.com/data/avatars/h/0/46.jpg?1689643551"
+                                                        alt="">
+                                                </a>
+                                            </el-col>
+                                            <el-col :span="16">
+                                                <el-row :gutter="20">
+                                                    <el-col :span="24"><a href="" class="user-name">Doanhpt</a></el-col>
+                                                    <el-col :span="24"><span class="user-position">New
+                                                            member</span></el-col>
+                                                    <el-col :span="18"><span class="head-info-content">Bài
+                                                            viết:</span></el-col>
+                                                    <el-col :span="6"><span class="head-info-content">1</span></el-col>
+                                                    <el-col :span="18"><span class="head-info-content">Reaction
+                                                            score:</span></el-col>
+                                                    <el-col :span="6"><span class="head-info-content">1</span></el-col>
+                                                    <el-col :span="18"><span class="head-info-content">Điểm thành
+                                                            tích:</span></el-col>
+                                                    <el-col :span="6"><span class="head-info-content">1</span></el-col>
+                                                </el-row>
+                                            </el-col>
+                                        </el-row>
+                                    </div>
+                                    <div class="item-info">
+                                        <el-row :gutter="10">
+                                            <el-col :span="12" class="item-info-item">
+                                                <a href="">Luồng tin</a>
+                                            </el-col>
+                                            <el-col :span="12" class="item-info-item">
+                                                <a href="">Reactions received</a>
+                                            </el-col>
+                                            <el-col :span="12" class="item-info-item">
+                                                <a href="">Nội dung của bạn</a>
+                                            </el-col>
+                                        </el-row>
+                                    </div>
+                                    <div class="item-info">
+                                        <el-row :gutter="10">
+                                            <el-col :span="12" class="item-info-item">
+                                                <a href="">Thông tin cá nhân</a>
+                                            </el-col>
+                                            <el-col :span="12" class="item-info-item">
+                                                <a href="">Chữ ký</a>
+                                            </el-col>
+                                            <el-col :span="12" class="item-info-item">
+                                                <a href="">Mật khẩu và bảo mật</a>
+                                            </el-col>
+                                            <el-col :span="12" class="item-info-item">
+                                                <a href="">Đang theo dõi</a>
+                                            </el-col>
+                                            <el-col :span="12" class="item-info-item">
+                                                <a href="">Bảo mật cá nhân</a>
+                                            </el-col>
+                                            <el-col :span="12" class="item-info-item">
+                                                <a href="">Bỏ qua</a>
+                                            </el-col>
+                                            <el-col :span="12" class="item-info-item">
+                                                <a href="">Tùy chọn</a>
+                                            </el-col>
+                                        </el-row>
+                                    </div>
+                                    <div class="item-info">
+                                        <el-row :gutter="10">
+                                            <el-col :span="24" class="item-info-item">
+                                                <a href="">Thoát</a>
+                                            </el-col>
+
+                                        </el-row>
+                                    </div>
+                                    <div class="footer-dropdown clearfix footer-notification" data-v-55d22b75="">
+                                        <el-form :model="form">
+                                            <el-form-item>
+                                                <el-input v-model="form.name" placeholder="Cập nhật trạng thái" />
+                                            </el-form-item>
+                                            <el-form-item class="footer-dropdown">
+                                                <el-button type="primary" @click="onSubmit"><el-icon>
+                                                        <Position />
+                                                    </el-icon>Post</el-button>
+                                            </el-form-item>
+                                        </el-form>
+                                    </div>
+                                </el-tab-pane>
+                                <el-tab-pane label="Bookmarks" name="bookmark">
+                                    <el-form :model="form">
+                                        <el-form-item class="form-select">
+                                            <el-select  multiple filterable remote reserve-keyword placeholder="Please enter a keyword"></el-select>
+                                        </el-form-item>
+                                    </el-form>
+                                    <div class="description">
+                                        You have not added any bookmarks yet.
+                                    </div>
+                                    <div class="footer-dropdown clearfix footer-notification">
+                                        <div class="footer-item"><a href="">Xem tất cả...</a></div>
+                                    </div>
+                                </el-tab-pane>
+                            </el-tabs>
+                        </el-sub-menu>
+                        <el-sub-menu index="6" class="menu-custom menu-right">
+                            <template #title><el-icon>
+                                    <Message />
+                                </el-icon></template>
+                            <div class="header-dropdown"> Trò chuyện </div>
+                            <el-menu class="header-menu-item">
+                                <el-menu-item index="6-1">
+                                    <div class="avatar-notification">
+                                        <a href="" class="image img-scaledown">
+                                            <img src="https://forum.horusvn.com/data/avatars/s/0/46.jpg?1689643551" alt="">
+                                        </a>
+                                    </div>
+                                    <div class="content-notification">
+                                        <a href="">
+                                            <span class="notification-name">Test Message</span><br>
+                                            <span class="content">Với: Doanhpt, Bienbp</span><br>
+                                            <span class="time">Lúc 13:59, Thứ 3</span>
+                                        </a>
+                                    </div>
+                                </el-menu-item>
+                                <el-menu-item index="6-2">
+                                    <div class="avatar-notification">
+                                        <a href="" class="image img-scaledown">
+                                            <img src="https://forum.horusvn.com/data/avatars/s/0/46.jpg?1689643551" alt="">
+                                        </a>
+                                    </div>
+                                    <div class="content-notification">
+                                        <a href="">
+                                            <span class="notification-name">Test Message</span><br>
+                                            <span class="content">Với: Doanhpt, Bienbp</span><br>
+                                            <span class="time">Lúc 13:59, Thứ 3</span>
+                                        </a>
+                                    </div>
+                                </el-menu-item>
+                                <el-menu-item index="6-3">
+                                    <div class="avatar-notification">
+                                        <a href="" class="image img-scaledown">
+                                            <img src="https://forum.horusvn.com/data/avatars/s/0/46.jpg?1689643551" alt="">
+                                        </a>
+                                    </div>
+                                    <div class="content-notification">
+                                        <a href="">
+                                            <span class="notification-name">Test Message</span><br>
+                                            <span class="content">Với: Doanhpt, Bienbp</span><br>
+                                            <span class="time">Lúc 13:59, Thứ 3</span>
+                                        </a>
+                                    </div>
+                                </el-menu-item>
+                                <el-menu-item index="6-4">
+                                    <div class="avatar-notification">
+                                        <a href="" class="image img-scaledown">
+                                            <img src="https://forum.horusvn.com/data/avatars/s/0/46.jpg?1689643551" alt="">
+                                        </a>
+                                    </div>
+                                    <div class="content-notification">
+                                        <a href="">
+                                            <span class="notification-name">Test Message</span><br>
+                                            <span class="content">Với: Doanhpt, Bienbp</span><br>
+                                            <span class="time">Lúc 13:59, Thứ 3</span>
+                                        </a>
+                                    </div>
+                                </el-menu-item>
+                                <el-menu-item index="6-5">
+                                    <div class="avatar-notification">
+                                        <a href="" class="image img-scaledown">
+                                            <img src="https://forum.horusvn.com/data/avatars/s/0/46.jpg?1689643551" alt="">
+                                        </a>
+                                    </div>
+                                    <div class="content-notification">
+                                        <a href="">
+                                            <span class="notification-name">Test Message</span><br>
+                                            <span class="content">Với: Doanhpt, Bienbp</span><br>
+                                            <span class="time">Lúc 13:59, Thứ 3</span>
+                                        </a>
+                                    </div>
+                                </el-menu-item>
+                            </el-menu>
+                            <div class="footer-dropdown clearfix footer-notification">
+                                <div class="footer-item"><a href="">Xem tất cả</a></div>
+                                <div class="footer-item"><a href="">Bắt đầu cuộc trò chuyện mới</a></div>
+                            </div>
+                        </el-sub-menu>
+                        <el-sub-menu index="7" class="menu-custom menu-right">
+                            <template #title><el-icon>
+                                    <Bell />
+                                </el-icon></template>
+                            <div class="header-dropdown"> Thông báo </div>
+                            <el-menu class="header-menu-item">
+                                <el-menu-item index="7-1">
+                                    <div class="avatar-notification">
+                                        <a href="" class="image img-scaledown">
+                                            <img src="https://forum.horusvn.com/data/avatars/s/0/46.jpg?1689643551" alt="">
+                                        </a>
+                                    </div>
+                                    <div class="content-notification">
+                                        <a href="">
+                                            <span class="notification-name">bachld </span>
+                                            <span class="content">đã trả lời vào chủ đề Thời tiết Horus. Có thể có bài viết thêm
+                                                trong chủ đề.</span><br>
+                                            <span class="time">Lúc 13:59, Thứ 3</span>
+                                        </a>
+                                    </div>
+                                </el-menu-item>
+                                <el-menu-item index="7-2">
+                                    <div class="avatar-notification">
+                                        <a href="" class="image img-scaledown">
+                                            <img src="https://forum.horusvn.com/data/avatars/s/0/46.jpg?1689643551" alt="">
+                                        </a>
+                                    </div>
+                                    <div class="content-notification">
+                                        <a href="">
+                                            <span class="notification-name">bachld </span>
+                                            <span class="content">đã trả lời vào chủ đề Thời tiết Horus. Có thể có bài viết thêm
+                                                trong chủ đề.</span><br>
+                                            <span class="time">Lúc 13:59, Thứ 3</span>
+                                        </a>
+                                    </div>
+                                </el-menu-item>
+                            </el-menu>
+
+                            <div class="footer-dropdown clearfix footer-notification">
+                                <div class="footer-item"><a href="">Xem tất cả</a></div>
+                                <div class="footer-item"><a href="">Đánh dấu đã đọc</a></div>
+                                <div class="footer-item"><a href="">Tùy chọn</a></div>
+                            </div>
+                        </el-sub-menu>
+                        <el-sub-menu index="8" class="menu-custom menu-right menu-search">
+                            <template #title><el-icon><Search /></el-icon> Tìm kiếm</template>
+                            <div class="header-dropdown">Tìm kiếm </div>
+                            <el-menu class="header-menu-item">
+
+                                <el-form :model="form">
+                                    <el-form-item>
+                                        <el-input v-model="form.name" placeholder="Tìm kiếm" />
+                                    </el-form-item>
+                                    <el-form-item>
+                                        <el-checkbox-group v-model="form.type">
+                                            <el-checkbox label="Chỉ tìm kiếm tiêu đề" name="type" />
+                                        </el-checkbox-group>
+                                    </el-form-item>
+                                    <el-form-item label="Bởi:">
+                                        <el-select  multiple filterable remote reserve-keyword placeholder="Please enter a keyword"></el-select>
+                                    </el-form-item>
+                                    <el-form-item class="footer-dropdown">
+                                        <el-button type="primary" @click="onSubmit"><el-icon>
+                                                <Search />
+                                            </el-icon>Tìm</el-button>
+                                        <el-button>Tìm kiếm nâng cao</el-button>
+                                    </el-form-item>
+                                </el-form>
+                            </el-menu>
+
+                        </el-sub-menu>
+                    </el-menu>
+                </div>
+            </el-header>
+        </el-container>
+    </div>
+</template>
   
-  <script lang="ts" setup>
-  import { computed, ref } from 'vue'
-  import { TableV2FixedDir } from 'element-plus'
-  
-  import type { ExpandedRowsChangeHandler, RowExpandHandler } from 'element-plus'
-  
-  const generateColumns = (length = 10, prefix = 'column-', props?: any) =>
-    Array.from({ length }).map((_, columnIndex) => ({
-      ...props,
-      key: `${prefix}${columnIndex}`,
-      dataKey: `${prefix}${columnIndex}`,
-      title: `Column ${columnIndex}`,
-      width: 150,
-    }))
-  
-  const generateData = (
-    columns: ReturnType<typeof generateColumns>,
-    length = 200,
-    prefix = 'row-'
-  ) =>
-    Array.from({ length }).map((_, rowIndex) => {
-      return columns.reduce(
-        (rowData, column, columnIndex) => {
-          rowData[column.dataKey] = `Row ${rowIndex} - Col ${columnIndex}`
-          return rowData
-        },
-        {
-          id: `${prefix}${rowIndex}`,
-          parentId: null,
-        }
-      )
-    })
-  
-  const columns = generateColumns(10).map((column, columnIndex) => {
-    // let fixed!: TableV2FixedDir
-    // if (columnIndex < 2) fixed = TableV2FixedDir.LEFT
-    // if (columnIndex > 8) fixed = TableV2FixedDir.RIGHT
-    // return { ...column, fixed }
-    return { ...column }
-  })
-  
-  const data = generateData(columns, 2)
-  console.log(data);
-  
-  const expandColumnKey = 'column-0'
-  
-  // add some sub items
-  for (let i = 0; i < 2; i++) {
-    data.push(
-      {
-        ...data[0],
-        id: `${data[0].id}-sub-${i}`,
-        parentId: data[0].id,
-        [expandColumnKey]: `Sub ${i}`,
-      },
-      {
-        ...data[0],
-        id: `${data[0].id}-sub-sub-${i}`,
-        parentId: `${data[0].id}-sub-${i}`,
-        [expandColumnKey]: `Sub-Sub ${i}`,
-      },
-      {
-        ...data[0],
-        id: `${data[0].id}-sub-sub-sub-${i}`,
-        parentId: `${data[0].id}-sub-sub-${i}`,
-        [expandColumnKey]: `Sub-Sub-Sub ${i}`,
-      }
-    )
-  }
-  
-  function unflatten(
-    data: ReturnType<typeof generateData>,
-    rootId = null,
-    dataKey = 'id',
-    parentKey = 'parentId'
-  ) {
-    const tree: any[] = []
-    const childrenMap = {}
-    for (const datum of data) {
-      const item = { ...datum }
-      const id = item[dataKey]
-      const parentId = item[parentKey]
-      console.log(item);
-      if (Array.isArray(item.children)) {
-        childrenMap[id] = item.children.concat(childrenMap[id] || [])
-      } else if (!childrenMap[id]) {
-        childrenMap[id] = []
-      }
-      item.children = childrenMap[id]
-  
-      if (parentId !== undefined && parentId !== rootId) {
-        if (!childrenMap[parentId]) childrenMap[parentId] = []
-        childrenMap[parentId].push(item)
-      } else {
-        tree.push(item)
-      }
-    }
-  
-    return tree
-  }
-  
-  const treeData = computed(() => unflatten(data))
-  console.log(treeData);
-  
-  
-  const expandedRowKeys = ref<string[]>([])
-  
-  const onRowExpanded = ({ expanded }: Parameters<RowExpandHandler>[0]) => {
-    console.log('Expanded:', expanded)
-  }
-  
-  const onExpandedRowsChange = (
-    expandedKeys: Parameters<ExpandedRowsChangeHandler>[0]
-  ) => {
-    console.log(expandedKeys)
-  }
-  </script>
+<script lang="ts" setup>
+import { ref, reactive } from 'vue'
+import { ArrowDown } from '@element-plus/icons-vue'
+import type { TabsPaneContext } from 'element-plus'
+
+const activeName = ref('user-info')
+
+const handleClick = (tab: TabsPaneContext, event: Event) => {
+    console.log(tab, event)
+}
+// const handleClick = () => {
+//     // eslint-disable-next-line no-alert
+//     alert('button click')
+// }
+const form = reactive({
+    name: '',
+    region: '',
+    date1: '',
+    date2: '',
+    delivery: false,
+    type: [],
+    resource: '',
+    desc: '',
+})
+const onSubmit = () => {
+    console.log('submit!')
+}
+const activeIndex = ref('1')
+const handleSelect = (key: string, keyPath: string[]) => {
+    console.log(key, keyPath)
+}
+</script>
+<style scoped>
+.example-showcase .el-dropdown+.el-dropdown {
+    margin-left: 15px;
+}
+
+.example-showcase .el-dropdown-link {
+    cursor: pointer;
+    color: var(--el-color-primary);
+    display: flex;
+    align-items: center;
+}
+
+.flex-grow {
+    flex-grow: 1;
+}
+
+.demo-tabs>.el-tabs__content {
+    padding: 32px;
+    color: #6b778c;
+    font-size: 32px;
+    font-weight: 600;
+}
+</style>
   
