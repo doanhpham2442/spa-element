@@ -1,8 +1,8 @@
 <template>
     <div class="common-layout">
         <el-container>
-            <el-header>
-                
+            <el-header class="header">
+                <MainHeader />
             </el-header>
             <el-main>
                 <div class="table-container">
@@ -24,6 +24,7 @@ import { ElInput, ElMessage, ElSelect, ElOption, ElButton, ElDatePicker, TableV2
 import type { FunctionalComponent } from 'vue'
 import type { InputInstance, ExpandedRowsChangeHandler, RowExpandHandler } from 'element-plus'
 import axios, { AxiosResponse } from 'axios';
+import MainHeader from './UserParent.vue';
 
 type SelectionCellProps = {
     value: string
